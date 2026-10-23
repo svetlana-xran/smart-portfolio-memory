@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#09111d" />
+    <meta name="description" content="Финансовое мемори: найдите все пары и соберите свой портфель." />
+    <meta property="og:title" content="Умный портфель — игра на память" />
+    <meta property="og:description" content="Финансовое мемори: найдите все пары и соберите свой портфель." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://svetlana-xran.github.io/smart-portfolio-memory/" />
+    <meta property="og:site_name" content="Умный портфель" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Умный портфель — игра на память" />
+    <meta name="twitter:description" content="Финансовое мемори: найдите все пары и соберите свой портфель." />
+    <title>Умный портфель — игра на память</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* The product is intentionally shipped as a phone-first surface. */
+      @font-face { font-family: 'Montserrat Local'; src: url('assets/fonts/Montserrat-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+      @font-face { font-family: 'Montserrat Local'; src: url('assets/fonts/Montserrat-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+      @font-face { font-family: 'Montserrat Local'; src: url('assets/fonts/Montserrat-Thin.ttf') format('truetype'); font-weight: 200; font-style: normal; font-display: swap; }
+      :root { --lime: #4d9dff; --gold: #9bcaff; --blue: #2365a8; --ink: #09111d; --panel: #101d2c; --panel-light: #17283b; }
+      html, body, button { font-family: 'Montserrat Local', Montserrat, Arial, sans-serif; }
+      *, body, button, .brand, .eyebrow, .topbar-note, .stat, .stat strong, .stat span, .hint-key, .board-hint, .footer, .result-grid, .result-grid strong { font-family: 'Montserrat Local', Montserrat, Arial, sans-serif !important; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .stat-progress { grid-column: 1 / -1; border-top: 1px solid var(--line); border-right: 0; }
+      .intro-art::before { content: ''; position: absolute; width: 310px; height: 310px; border-radius: 50%; background: radial-gradient(circle, rgba(36,145,255,.32) 0%, rgba(36,112,255,.16) 34%, transparent 72%); filter: blur(12px); box-shadow: 0 0 70px rgba(63,164,255,.24); }
+      .art-ring { border-color: rgba(77,157,255,.32); }
+      .ring-two { border-color: rgba(155,202,255,.22); }
+      .art-orbit { border-color: rgba(77,157,255,.52); box-shadow: 0 0 22px rgba(77,157,255,.13); }
+      .orbit-two { border-color: rgba(155,202,255,.28); }
+      .art-card-back { border-color: rgba(110,185,255,.85); background: linear-gradient(145deg, #174b80, #0b1b32); box-shadow: 0 0 34px rgba(44,135,255,.34), 0 28px 42px rgba(0,0,0,.42); }
+      .art-card-front { border-color: rgba(110,185,255,.92); background: linear-gradient(145deg, #1c5b9a, #0b1c35); box-shadow: 0 0 42px rgba(44,135,255,.42), 0 28px 42px rgba(0,0,0,.42); }
+      .art-card-front:after { border-color: rgba(77,157,255,.75); box-shadow: 0 0 18px rgba(77,157,255,.22); }
+      .mini-bars i, .mini-bars i:nth-child(4), .mini-bars i:nth-child(5) { background: #8dc7ff; box-shadow: 0 0 10px rgba(77,157,255,.26); }
+      .mini-line { border-color: #58b9ff; box-shadow: 0 0 17px rgba(77,157,255,.7); }
+      .float-label, .art-card-front span { color: #9bcaff; }
+      .crosshair, .crosshair:before, .crosshair:after { border-color: #4d9dff; background-color: #4d9dff; box-shadow: 0 0 12px rgba(77,157,255,.5); }
+      .result-glow { background: radial-gradient(ellipse, rgba(35,116,255,.24), transparent 68%); }
+      .card-inner { display: block; }
+      .card-back { background: radial-gradient(circle at 72% 24%, rgba(77,157,255,.35), transparent 34%), linear-gradient(145deg, #173a63, #0d1b2d); border-color: rgba(120,184,245,.42); }
+      .card-back:before { border-color: rgba(120,184,245,.65); box-shadow: 0 0 0 10px rgba(77,157,255,.07), 0 0 30px rgba(77,157,255,.2); }
+      .card-back:after { content: "УП"; color: rgba(224,240,255,.86); }
+      .memory-card { touch-action: manipulation; }
+      .intro h1, .result-panel h2, .section-heading h2 { letter-spacing: -0.025em; }
+      .primary-button { color: #071b32; display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 240px; min-height: 56px; padding: 15px 22px; border: 1px solid rgba(166,220,255,.78); background: linear-gradient(145deg, #82c7ff 0%, #4d9ff7 45%, #2778d7 100%); box-shadow: 0 14px 30px rgba(21,112,227,.34), 0 3px 0 rgba(17,72,143,.55), inset 0 1px 0 rgba(255,255,255,.52), inset 0 -4px 10px rgba(13,63,133,.18); text-align: center; white-space: nowrap; }
+      .primary-button span { margin-left: 0; line-height: 1; }
+      .primary-button:hover { box-shadow: 0 18px 38px rgba(38,135,246,.46), 0 3px 0 rgba(17,72,143,.55), inset 0 1px 0 rgba(255,255,255,.62), inset 0 -4px 10px rgba(13,63,133,.16); }
+      .primary-button:active { transform: translateY(2px); box-shadow: 0 8px 16px rgba(21,112,227,.3), 0 1px 0 rgba(17,72,143,.55), inset 0 2px 8px rgba(13,63,133,.22); }
+      .ghost-button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; box-shadow: 0 8px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(143,198,255,.08); }
+      .ghost-button span { margin-left: 0; line-height: 1; }
+      .card-back, .card-front { box-shadow: inset 0 0 20px rgba(54,145,255,.12), 0 8px 16px rgba(5,28,58,.32); }
+      .board-wrap { box-shadow: 0 0 46px rgba(35,120,255,.14), inset 0 0 30px rgba(35,120,255,.06); }
+      .card-back { box-shadow: inset 0 0 20px rgba(54,145,255,.12), 0 0 14px rgba(54,145,255,.12); }
+      .memory-card.is-matched .card-front { box-shadow: inset 0 0 0 1px rgba(98,185,255,.75), 0 0 28px rgba(54,145,255,.48); }
+      .progress-track i { box-shadow: 0 0 12px rgba(77,157,255,.9); }
+      @media (min-width: 561px) {
+        body { background: #080b10; }
+        .app-shell { max-width: 480px; padding: 0 18px; background: #0d1117; box-shadow: 0 0 90px rgba(27,54,79,.2); min-height: 100vh; }
+        .topbar { height: 72px; }
+        .topbar-note { font-size: 9px; }
+        .intro { display: flex; flex-direction: column; gap: 0; min-height: auto; padding: 50px 0 52px; text-align: center; }
+        .intro-art { order: -1; width: 100%; height: 285px; transform: scale(.78); margin: -10px -25px; }
+        .intro-copy { width: 100%; }
+        .intro h1 { font-size: 45px; }
+        .intro-text { font-size: 14px; margin: 22px auto 29px; }
+        .intro-actions { justify-content: center; }
+        .best-chip { width: 100%; justify-content: center; }
+        .game-panel { padding-top: 50px; }
+        .section-heading { align-items: start; gap: 20px; }
+        .section-heading h2 { font-size: 28px; }
+        .ghost-button { font-size: 10px; padding: 10px; }
+        .stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .stat { padding: 13px 8px; }
+        .stat strong { font-size: 15px; }
+        .stat span { font-size: 8px; }
+        .stat-progress { grid-column: 1 / -1; border-top: 1px solid var(--line); border-right: 0; }
+        .board-wrap { padding: 14px 10px 15px; }
+        .board { grid-template-columns: repeat(4, 1fr); gap: 7px; }
+        .memory-card { min-height: 0; }
+        .card-label { font-size: 7px; left: 4px; right: 4px; bottom: 4px; }
+        .board-hint { font-size: 8px; }
+        .hint-key { font-size: 8px; padding: 3px; }
+        .result-panel { padding: 84px 0 90px; }
+        .result-panel h2 { font-size: 48px; }
+        .result-grid { grid-template-columns: repeat(2, 1fr); }
+        .result-grid div:nth-child(2) { border-right: 0; }
+        .result-grid div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+        .footer { gap: 10px; flex-wrap: wrap; line-height: 1.5; }
+        .footer span:nth-child(2) { order: 3; width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Умный портфель">
+          <span class="brand-mark"><span></span><span></span><span></span></span>
+          <span>УМНЫЙ <i>ПОРТФЕЛЬ</i></span>
+        </a>
+        <div class="topbar-note"><span class="live-dot"></span> 12 пар · 1 раунд</div>
+      </header>
+
+      <section class="intro" id="top">
+        <div class="intro-copy">
+          <p class="eyebrow">УМНЫЙ ПОРТФЕЛЬ / 01</p>
+          <h1>Найдите связь.<br /><em>Соберите портфель.</em></h1>
+          <p class="intro-text">Финансовая разминка на память, концентрацию и точность решений. Откройте все пары за один раунд.</p>
+          <div class="intro-actions">
+            <button class="primary-button" id="start-button" type="button">Начать раунд</button>
+          </div>
+        </div>
+        <div class="intro-art" aria-hidden="true">
+          <div class="art-ring ring-one"></div><div class="art-ring ring-two"></div>
+          <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+          <div class="art-card art-card-back"><span>УП</span></div>
+          <div class="art-card art-card-front"><div class="mini-bars"><i></i><i></i><i></i><i></i><i></i></div><div class="mini-line"></div><span>ФОКУС</span></div>
+          <span class="float-label label-one">ПАМЯТЬ / 01</span><span class="float-label label-two">ТОЧНОСТЬ РЕШЕНИЙ</span>
+          <div class="crosshair"></div>
+        </div>
+      </section>
+
+      <section class="game-panel" id="game-panel" aria-labelledby="game-heading" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">ИГРОВОЙ РАУНД</p><h2 id="game-heading">Фокус на доске</h2></div>
+        </div>
+        <div class="stats-bar" aria-live="polite">
+          <div class="stat"><span>Ходы</span><strong id="moves">00</strong></div>
+          <div class="stat"><span>Найдено</span><strong><b id="matches">00</b><small> / 12</small></strong></div>
+          <div class="stat stat-progress"><span>Прогресс</span><div class="progress-track"><i id="progress"></i></div></div>
+        </div>
+        <div class="board-wrap">
+          <div class="board" id="board" aria-label="Игровое поле мемори"></div>
+        </div>
+      </section>
+
+      <section class="result-panel" id="result-panel" aria-live="polite" hidden>
+        <div class="result-glow"></div>
+        <p class="eyebrow">РАУНД ЗАВЕРШЁН / 01</p>
+        <h2>Связи найдены.</h2>
+        <p class="result-lead">Все связи найдены. Отличная тренировка внимания.</p>
+        <div class="result-grid">
+          <div><span>Ходы</span><strong id="final-moves">00</strong></div>
+          <div><span>Точность</span><strong id="final-accuracy">0%</strong></div>
+        </div>
+        <button class="primary-button" id="play-again-button" type="button">Сыграть ещё раз</button>
+      </section>
+
+    </main>
+    <script src="game.js"></script>
+  </body>
+</html>
